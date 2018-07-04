@@ -32,6 +32,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import me.aflak.bluetooth.Bluetooth;
 
@@ -272,31 +275,51 @@ public class Chat extends AppCompatActivity implements Bluetooth.CommunicationCa
         }
     }
 
-    private String readTextFromUri(Uri uri) throws IOException {
+    private void readTextFromUri(Uri uri) throws IOException {
         InputStream inputStream = getContentResolver().openInputStream(uri);
 
         byte[] bytes = readBytes(inputStream);
-        String[] hexPixelArray = new String[bytes.length];
+        ArrayList<String> rawData = new ArrayList<>();
+        ArrayList<String> pixelArray =  new ArrayList<>();
+        String newS= "";
 
-        for(byte i:bytes){
+        System.out.println(bytes);
 
-            String s = byteToHex(i);
-            //hexPixelArray[i] = s;
-            System.out.println(s);
+        for(byte b:bytes){
+
+            String s = byteToHex(b);
+            rawData.add(s);
+            //System.out.println(s);
         }
 
-        System.out.println(hexPixelArray[10]);
+        System.out.println("......Print Raw Data......");
+        for(int i=0; i<rawData.size();i++){
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-                inputStream));
-        StringBuilder stringBuilder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            stringBuilder.append(line);
-            System.out.println(line);
+            if(i>=62){
+                pixelArray.add(rawData.get(i));
+            }
+            //System.out.println(rawData.get(i));
         }
-        inputStream.close();
-        return stringBuilder.toString();
+
+        System.out.println("......Print Pixel Data......");
+        for(int i=0;i<pixelArray.size();i++){
+            System.out.println(pixelArray.get(i));
+        }
+
+        //byte[] testbytes = new byte[] { (byte) 0x02, (byte) 0x0F, (byte) 0xF0 };
+
+        for(int i=0; i<pixelArray.size();i++){
+
+            // Create a BigInteger using the byte array
+            BigInteger bi = new BigInteger(pixelArray.get(i), 16);
+
+            String s = bi.toString(2);
+            newS += String.format("%8s", s).replace(' ', '0');
+        }
+
+        System.out.println(newS);
+
+
     }
 
     public static byte[] readBytes( InputStream stream ) throws IOException {
