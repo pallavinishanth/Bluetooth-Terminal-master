@@ -319,7 +319,14 @@ public class Chat extends AppCompatActivity implements Bluetooth.CommunicationCa
 
         System.out.println(newS);
 
+        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(this);
+        databaseAccess.open();
+        List<Integer> table_data = databaseAccess.read_632_Horizontal("632_Horizontal");
+        databaseAccess.close();
 
+        for(int i=0;i<table_data.size();i++){
+            System.out.println(table_data.get(i));
+        }
     }
 
     public static byte[] readBytes( InputStream stream ) throws IOException {

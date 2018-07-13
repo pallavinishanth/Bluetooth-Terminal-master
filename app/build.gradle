@@ -25,4 +25,5 @@ dependencies {
 
     compile 'me.aflak.libraries:bluetooth:1.2.4'
     compile 'me.aflak.libraries:pulltorefresh:1.0'
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
 }
