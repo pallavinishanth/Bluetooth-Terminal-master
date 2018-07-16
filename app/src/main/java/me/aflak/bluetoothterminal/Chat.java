@@ -327,6 +327,57 @@ public class Chat extends AppCompatActivity implements Bluetooth.CommunicationCa
         for(int i=0;i<table_data.size();i++){
             System.out.println(table_data.get(i));
         }
+
+        //Preparing data
+        prepareData(newS, table_data);
+    }
+
+    public List<String> prepareData(String bitString, List<Integer> dbData){
+
+        List<String> finalHex = new ArrayList<String>();
+
+        int bitPos = 0;
+
+        for(int i=0; i<dbData.size();i++){
+
+            if(dbData.get(i) ==2){
+                bitPos = i-1;
+                break;
+            }
+        }
+
+        System.out.println("Bit String Length " + bitString.length());
+        System.out.println("Database Size " + dbData.size());
+        System.out.println("Bit data start position in db " + bitPos);
+
+        //Placing first bit
+        dbData.set(bitPos, Integer.parseInt(String.valueOf(bitString.charAt(0))));
+
+        int count=1;
+
+        //Place the bits in dbData List at respective positions
+        for(int i=bitPos+1;i<dbData.size();i++){
+
+            if(dbData.get(i)!= 1 && dbData.get(i)!= 0){
+
+                if(count<632){
+                    dbData.set(i, Integer.parseInt(String.valueOf(bitString.charAt(count))));
+                    count++;
+                }else{
+                    break;
+                }
+            }
+        }
+
+        System.out.println("count value " + count);
+
+        System.out.println("Updated Database Size" + dbData.size());
+        for(int i=0;i<dbData.size();i++){
+            System.out.println(dbData.get(i));
+        }
+
+        return finalHex;
+
     }
 
     public static byte[] readBytes( InputStream stream ) throws IOException {
