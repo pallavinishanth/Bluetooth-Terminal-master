@@ -51,6 +51,8 @@ public class Chat extends AppCompatActivity implements Bluetooth.CommunicationCa
 
     private final String TAG = "Chat";
 
+    List<String> finalHex = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -332,9 +334,7 @@ public class Chat extends AppCompatActivity implements Bluetooth.CommunicationCa
         prepareData(newS, table_data);
     }
 
-    public List<String> prepareData(String bitString, List<Integer> dbData){
-
-        List<String> finalHex = new ArrayList<String>();
+    public void prepareData(String bitString, List<Integer> dbData){
 
         int bitPos = 0;
 
@@ -376,9 +376,28 @@ public class Chat extends AppCompatActivity implements Bluetooth.CommunicationCa
             System.out.println(dbData.get(i));
         }
 
-        bitListtoHex(dbData);
+        //Appending zeros after 13 bits of each row in db data
+        int k=0;
+        while(k< dbData.size()){
 
-        return finalHex;
+            List<Integer> dbData_append = new ArrayList<>();
+            for(int j=0; j<13;j++){
+                dbData_append.add(dbData.get(k));
+                k++;
+            }
+            dbData_append.add(0);
+            dbData_append.add(0);
+            dbData_append.add(0);
+
+            //System.out.println("16 bits..." + dbData_append);
+            bitListtoHex(dbData_append);
+
+        }
+
+        System.out.println("FinalHex data... ");
+        for(int i=0;i<finalHex.size();i++){
+            System.out.println(finalHex.get(i));
+        }
 
     }
 
@@ -442,15 +461,18 @@ public class Chat extends AppCompatActivity implements Bluetooth.CommunicationCa
 
         StringBuilder hexString = new StringBuilder();
         StringBuilder eightBits = new StringBuilder();
-        for(int i = 0; i < binary.size(); i += 8) {
-            for(int j = i; j < (i + 8) && j < binary.size(); j++) { // read next 8 bits or whatever bits are remaining
+        for(int i = 0; i < binary.size(); i += 4) {
+            for(int j = i; j < (i + 4) && j < binary.size(); j++) { // read next 8 bits or whatever bits are remaining
                 eightBits.append(binary.get(j)); // build 8 bit value
             }
             int decimal = Integer.parseInt(eightBits.toString(), 2); // get decimal value
-            hexString.append(Integer.toHexString(decimal) + " "); // add hex value to the hex string and a space for readability
+            hexString.append(Integer.toHexString(decimal)); // add hex value to the hex string and a space for readability
             eightBits.setLength(0); // reset so we can append the new 8 bits
         }
-        System.out.println(hexString.toString());
+
+        finalHex.add(hexString.toString().substring(0,2));
+        finalHex.add(hexString.toString().substring(2));
+        //System.out.println(hexString.toString());
     }
 }
 
